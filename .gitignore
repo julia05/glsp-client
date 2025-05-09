@@ -8,6 +8,12 @@ artifacts/
 
 examples/workflow-standalone/app
 
+# files and subfolder that should be tracked
+!examples/workflow-standalone/app/files
+!examples/workflow-standalone/app/_remote.html
+!examples/workflow-standalone/app/_local.html
+!examples/workflow-standalone/app/_base.html
+
 *.ttf
 *.log
 *.jar

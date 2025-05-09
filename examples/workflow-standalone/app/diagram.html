@@ -22,11 +22,37 @@
                 width: 100%;
                 height: 100%;
             }
+
+            .editor-grid { display: flex; height: 100vh; }
+            iframe {
+                border: none;
+            }
+            </style>
         </style>
     </head>
 
     <body>
-        <div id="sprotty"></div>
-        <script src="bundle.js"></script>
+        <div class="editor-grid">
+            <iframe 
+                id="editor1"
+                src="_local.html"
+                sandbox="allow-scripts allow-same-origin"
+                style="width: 50vw;"
+            >
+            </iframe>
+            <iframe 
+                id="editor0"
+                src="_base.html"
+                sandbox="allow-scripts allow-same-origin"
+                style="width: 50vw;"
+            >
+            </iframe>
+            <iframe 
+                id="editor2"
+                src="_remote.html"
+                sandbox="allow-scripts allow-same-origin"
+                style="width: 50vw;">
+            </iframe>
+        </div>
     </body>
 </html>

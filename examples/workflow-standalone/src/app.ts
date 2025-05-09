@@ -33,10 +33,19 @@ const port = GLSP_SERVER_PORT;
 const id = 'workflow';
 const diagramType = 'workflow-diagram';
 
+console.log(document.currentScript);
+// eslint-disable-next-line no-debugger
+// debugger;
+const script = document.currentScript;
+const fileName = script ? script.getAttribute('data-file-name') : 'test.wf';
+const idFromScript = script ? script.getAttribute('data-id') : 'sprotty-0';
 const loc = window.location.pathname;
 const currentDir = loc.substring(0, loc.lastIndexOf('/'));
-const examplePath = resolve(join(currentDir, '../app/example1.wf'));
-const clientId = 'sprotty';
+const examplePath = resolve(join(currentDir, `../app/files/${fileName}`));
+const clientId = idFromScript ? idFromScript : 'sprotty-0';
+
+// eslint-disable-next-line no-debugger
+// debugger;
 
 const webSocketUrl = `ws://${host}:${port}/${id}`;
 
@@ -46,6 +55,12 @@ const wsProvider = new GLSPWebSocketProvider(webSocketUrl);
 wsProvider.listen({ onConnection: initialize, onReconnect: reconnect, logger: console });
 
 async function initialize(connectionProvider: MessageConnection, isReconnecting = false): Promise<void> {
+    console.log('initialize');
+    console.log(document.currentScript);
+    // eslint-disable-next-line no-debugger
+    // debugger;
+    console.log(document.currentScript?.getAttribute('data-file-name'));
+
     glspClient = new BaseJsonrpcGLSPClient({ id, connectionProvider });
     container = createContainer({ clientId, diagramType, glspClientProvider: async () => glspClient, sourceUri: examplePath });
     const actionDispatcher = container.get(GLSPActionDispatcher);
