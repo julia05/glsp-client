@@ -34,7 +34,8 @@
   "dependencies": {
     "@eclipse-glsp-examples/workflow-glsp": "2.5.0-next",
     "@eclipse-glsp/client": "2.5.0-next",
-    "inversify-logger-middleware": "^3.1.0"
+    "inversify-logger-middleware": "^3.1.0",
+    "simple-git": "^3.27.0"
   },
   "devDependencies": {
     "@types/shelljs": "0.8.12",

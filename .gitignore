@@ -7,7 +7,6 @@ lib/
 artifacts/
 
 examples/workflow-standalone/app
-examples/workflow-standalone/app/**/*
 
 # files and subfolder that should be tracked
 !examples/workflow-standalone/app/files
