@@ -30,11 +30,11 @@
       "taskType": "manual",
       "layoutOptions": {
         "paddingRight": 10,
-        "prefWidth": 91.59375,
+        "prefWidth": 91.6,
         "prefHeight": 30
       },
       "size": {
-        "width": 91.59375,
+        "width": 91.6,
         "height": 30
       },
       "children": [
@@ -56,7 +56,7 @@
           "cssClasses": [],
           "type": "label:heading",
           "alignment": {
-            "x": 15.9609375,
+            "x": 15.97,
             "y": 13
           },
           "id": "task_Push_label",
@@ -66,7 +66,7 @@
             "y": 7
           },
           "size": {
-            "width": 31.921875,
+            "width": 31.93,
             "height": 16
           },
           "children": []
@@ -209,7 +209,7 @@
             "y": 7
           },
           "size": {
-            "width": 51.46875,
+            "width": 51.5,
             "height": 16
           },
           "children": []
@@ -238,11 +238,11 @@
       "taskType": "automated",
       "layoutOptions": {
         "paddingRight": 10,
-        "prefWidth": 90.248046875,
+        "prefWidth": 90.2,
         "prefHeight": 30
       },
       "size": {
-        "width": 90.248046875,
+        "width": 90.2,
         "height": 30
       },
       "children": [
@@ -264,7 +264,7 @@
           "cssClasses": [],
           "type": "label:heading",
           "alignment": {
-            "x": 24.5234375,
+            "x": 24.53,
             "y": 13
           },
           "id": "task_KeepTp_label",
@@ -274,7 +274,7 @@
             "y": 7
           },
           "size": {
-            "width": 49.248046875,
+            "width": 49.25,
             "height": 16
           },
           "children": []
@@ -303,11 +303,11 @@
       "taskType": "manual",
       "layoutOptions": {
         "paddingRight": 10,
-        "prefWidth": 75.32421875,
+        "prefWidth": 75.33,
         "prefHeight": 30
       },
       "size": {
-        "width": 75.32421875,
+        "width": 75.33,
         "height": 30
       },
       "children": [
@@ -706,7 +706,7 @@
       "sourceId": "fork_1",
       "targetId": "c1830d23-9d62-42e3-84fa-0722e74d770c",
       "args": {
-        "edgeSourcePointX": 140.0249772430447,
+        "edgeSourcePointX": 140.0,
         "edgeSourcePointY": 127.351382200445,
         "edgeTargetPointX": 209.79609375,
         "edgeTargetPointY": 160
