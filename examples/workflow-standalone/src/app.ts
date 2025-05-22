@@ -16,11 +16,14 @@
 import 'reflect-metadata';
 
 import {
+    Args,
     BaseJsonrpcGLSPClient,
     DiagramLoader,
+    EditMode,
     GLSPActionDispatcher,
     GLSPClient,
     GLSPWebSocketProvider,
+    IDiagramOptions,
     MessageAction,
     StatusAction
 } from '@eclipse-glsp/client';
@@ -33,19 +36,40 @@ const port = GLSP_SERVER_PORT;
 const id = 'workflow';
 const diagramType = 'workflow-diagram';
 
-console.log(document.currentScript);
-// eslint-disable-next-line no-debugger
-// debugger;
+const baseFileInput = document.createElement('input');
+baseFileInput.type = 'file';
+
+baseFileInput.addEventListener('change', event => {
+    const input = event.target as HTMLInputElement;
+
+    if (input && input.files) {
+        const selectedFile = input.files[0];
+        if (selectedFile) {
+            const reader = new FileReader();
+            reader.onload = readerEvent => {
+                if (readerEvent.target) {
+                    const content = readerEvent.target.result;
+                    console.log(content);
+                }
+            };
+        }
+    }
+});
+baseFileInput.click();
+
 const script = document.currentScript;
-const fileName = script ? script.getAttribute('data-file-name') : 'test.wf';
-const idFromScript = script ? script.getAttribute('data-id') : 'sprotty-0';
+
+if (!script) {
+    throw Error('script null, can not continue');
+}
+
+const fileName = script.getAttribute('data-file-name') ? script.getAttribute('data-file-name') : 'test.wf';
+const idFromScript = script.getAttribute('data-id') ? script.getAttribute('data-id') : 'sprotty-0';
+const diffSide = script.getAttribute('data-diff-side');
 const loc = window.location.pathname;
 const currentDir = loc.substring(0, loc.lastIndexOf('/'));
 const examplePath = resolve(join(currentDir, `../app/files/${fileName}`));
 const clientId = idFromScript ? idFromScript : 'sprotty-0';
-
-// eslint-disable-next-line no-debugger
-// debugger;
 
 const webSocketUrl = `ws://${host}:${port}/${id}`;
 
@@ -57,15 +81,57 @@ wsProvider.listen({ onConnection: initialize, onReconnect: reconnect, logger: co
 async function initialize(connectionProvider: MessageConnection, isReconnecting = false): Promise<void> {
     console.log('initialize');
     console.log(document.currentScript);
-    // eslint-disable-next-line no-debugger
-    // debugger;
     console.log(document.currentScript?.getAttribute('data-file-name'));
 
     glspClient = new BaseJsonrpcGLSPClient({ id, connectionProvider });
-    container = createContainer({ clientId, diagramType, glspClientProvider: async () => glspClient, sourceUri: examplePath });
+    const containerOptions: IDiagramOptions = { clientId, diagramType, glspClientProvider: async () => glspClient, sourceUri: examplePath };
+    if (fileName !== 'example_original.wf') {
+        containerOptions.editMode = EditMode.READONLY;
+    }
+    container = createContainer(containerOptions);
     const actionDispatcher = container.get(GLSPActionDispatcher);
     const diagramLoader = container.get(DiagramLoader);
-    await diagramLoader.load({ requestModelOptions: { isReconnecting } });
+
+    // nur left und right brauchen die zusätzlichen args
+    // left und dann diffContent = base
+    // right und diffContent base
+    const requestModelOptions: Args = {
+        isReconnecting
+    };
+
+    if (diffSide) {
+        // TODO: ATTENTION this is hardcoded - filename of base
+        const baseUri = resolve(join(currentDir, '../app/files/example_original.wf'));
+        /*
+        const baseFileResponse = await fetch(baseUrl);
+
+        if (!baseFileResponse.ok) {
+            throw new Error(
+                `Unable to Fetch Base File, Please check URL
+				or Network connectivity!!`
+            );
+        }
+        const baseFileContent = await baseFileResponse.text();
+        */
+        if (diffSide === 'left') {
+            console.log(baseUri);
+            console.log(window.location.pathname);
+            const baseFileResponse = await fetch('files/example_original.wf');
+
+            if (!baseFileResponse.ok) {
+                throw new Error(
+                    `Unable to Fetch Base File, Please check URL
+                    or Network connectivity!!`
+                );
+            }
+            console.log(await baseFileResponse.text());
+        }
+
+        requestModelOptions.diffSide = diffSide;
+        requestModelOptions.diffUri = baseUri;
+    }
+
+    await diagramLoader.load({ requestModelOptions });
 
     if (isReconnecting) {
         const message = `Connection to the ${id} glsp server got closed. Connection was successfully re-established.`;
