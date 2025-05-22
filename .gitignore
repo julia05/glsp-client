@@ -10,6 +10,9 @@ examples/workflow-standalone/app
 
 # files that should be tracked (folders do not work)
 !examples/workflow-standalone/app/files/example_mix.wf
+!examples/workflow-standalone/app/files/example_local.wf
+!examples/workflow-standalone/app/files/example_remote.wf
+!examples/workflow-standalone/app/files/example_original.wf
 !examples/workflow-standalone/app/files/example1.wf
 !examples/workflow-standalone/app/_remote.html
 !examples/workflow-standalone/app/_local.html
