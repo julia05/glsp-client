@@ -29,6 +29,7 @@ import {
 import { Container } from 'inversify';
 import { makeLoggerMiddleware } from 'inversify-logger-middleware';
 import '../css/diagram.css';
+import { standaloneCompareModule } from './features/compare/standalone-compare-module';
 import { standaloneTaskEditorModule } from './features/direct-task-editing/standalone-task-editor-module';
 import { getParameters } from './url-parameters';
 export default function createContainer(options: IDiagramOptions): Container {
@@ -39,7 +40,7 @@ export default function createContainer(options: IDiagramOptions): Container {
     const container = createWorkflowDiagramContainer(
         createDiagramOptionsModule(options),
         {
-            add: [standaloneTaskEditorModule, accessibilityModule],
+            add: [standaloneTaskEditorModule, accessibilityModule, standaloneCompareModule],
             remove: toolPaletteModule
         },
         STANDALONE_MODULE_CONFIG
