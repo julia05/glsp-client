@@ -9,6 +9,7 @@ artifacts/
 examples/workflow-standalone/app
 
 # files that should be tracked (folders do not work)
+!examples/workflow-standalone/app/files/example1.wf
 !examples/workflow-standalone/app/files/base.wf
 !examples/workflow-standalone/app/files/local.wf
 !examples/workflow-standalone/app/files/remote.wf

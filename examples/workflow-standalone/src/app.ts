@@ -43,7 +43,7 @@ if (!script) {
     throw Error('script null, can not continue');
 }
 
-const fileName = script.getAttribute('data-file-name') ? script.getAttribute('data-file-name') : 'test.wf';
+const fileName = script.getAttribute('data-file-name') ? script.getAttribute('data-file-name') : 'example1.wf';
 const idFromScript = script.getAttribute('data-id') ? script.getAttribute('data-id') : 'sprotty-0';
 const diffSide = script.getAttribute('data-diff-side');
 const loc = window.location.pathname;
