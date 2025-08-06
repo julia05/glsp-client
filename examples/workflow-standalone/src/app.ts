@@ -29,33 +29,13 @@ import {
 } from '@eclipse-glsp/client';
 import { Container } from 'inversify';
 import { join, resolve } from 'path';
+import { v4 as uuid } from 'uuid';
 import { MessageConnection } from 'vscode-jsonrpc';
 import createContainer from './di.config';
 const host = GLSP_SERVER_HOST;
 const port = GLSP_SERVER_PORT;
 const id = 'workflow';
 const diagramType = 'workflow-diagram';
-
-const baseFileInput = document.createElement('input');
-baseFileInput.type = 'file';
-
-baseFileInput.addEventListener('change', event => {
-    const input = event.target as HTMLInputElement;
-
-    if (input && input.files) {
-        const selectedFile = input.files[0];
-        if (selectedFile) {
-            const reader = new FileReader();
-            reader.onload = readerEvent => {
-                if (readerEvent.target) {
-                    const content = readerEvent.target.result;
-                    console.log(content);
-                }
-            };
-        }
-    }
-});
-baseFileInput.click();
 
 const script = document.currentScript;
 
@@ -71,6 +51,9 @@ const currentDir = loc.substring(0, loc.lastIndexOf('/'));
 const examplePath = resolve(join(currentDir, `../app/files/${fileName}`));
 const clientId = idFromScript ? idFromScript : 'sprotty-0';
 
+// TODO: ATTENTION thardcoded filename of base
+const BASE_FILENAME = 'base.wf';
+
 const webSocketUrl = `ws://${host}:${port}/${id}`;
 
 let glspClient: GLSPClient;
@@ -79,56 +62,28 @@ const wsProvider = new GLSPWebSocketProvider(webSocketUrl);
 wsProvider.listen({ onConnection: initialize, onReconnect: reconnect, logger: console });
 
 async function initialize(connectionProvider: MessageConnection, isReconnecting = false): Promise<void> {
-    console.log('initialize');
-    console.log(document.currentScript);
-    console.log(document.currentScript?.getAttribute('data-file-name'));
-
     glspClient = new BaseJsonrpcGLSPClient({ id, connectionProvider });
     const containerOptions: IDiagramOptions = { clientId, diagramType, glspClientProvider: async () => glspClient, sourceUri: examplePath };
-    if (fileName !== 'example_original.wf') {
+    if (!diffSide) {
         containerOptions.editMode = EditMode.READONLY;
     }
     container = createContainer(containerOptions);
     const actionDispatcher = container.get(GLSPActionDispatcher);
     const diagramLoader = container.get(DiagramLoader);
 
-    // nur left und right brauchen die zusätzlichen args
-    // left und dann diffContent = base
-    // right und diffContent base
     const requestModelOptions: Args = {
         isReconnecting
     };
 
     if (diffSide) {
-        // TODO: ATTENTION this is hardcoded - filename of base
-        const baseUri = resolve(join(currentDir, '../app/files/example_original.wf'));
-        /*
-        const baseFileResponse = await fetch(baseUrl);
+        // diffSide = local or remote -> base must be loaded first
+        const diffId = uuid();
 
-        if (!baseFileResponse.ok) {
-            throw new Error(
-                `Unable to Fetch Base File, Please check URL
-				or Network connectivity!!`
-            );
-        }
-        const baseFileContent = await baseFileResponse.text();
-        */
-        if (diffSide === 'left') {
-            console.log(baseUri);
-            console.log(window.location.pathname);
-            const baseFileResponse = await fetch('files/example_original.wf');
+        loadBase(diffId);
 
-            if (!baseFileResponse.ok) {
-                throw new Error(
-                    `Unable to Fetch Base File, Please check URL
-                    or Network connectivity!!`
-                );
-            }
-            console.log(await baseFileResponse.text());
-        }
-
+        requestModelOptions.diffId = diffId;
+        requestModelOptions.loadFile = true;
         requestModelOptions.diffSide = diffSide;
-        requestModelOptions.diffUri = baseUri;
     }
 
     await diagramLoader.load({ requestModelOptions });
@@ -145,4 +100,29 @@ async function initialize(connectionProvider: MessageConnection, isReconnecting 
 async function reconnect(connectionProvider: MessageConnection): Promise<void> {
     glspClient.stop();
     initialize(connectionProvider, true /* isReconnecting */);
+}
+
+function loadBase(diffId: string): void {
+    // TODO: ATTENTION hardcoded path of base
+    const baseUri = resolve(join(currentDir, `../app/files/${BASE_FILENAME}`));
+
+    const containerOptions: IDiagramOptions = {
+        clientId: 'base-loader-client',
+        diagramType,
+        glspClientProvider: async () => glspClient,
+        sourceUri: baseUri,
+        editMode: EditMode.READONLY
+    };
+
+    const baseContainer = createContainer(containerOptions);
+    const diagramLoader = baseContainer.get(DiagramLoader);
+
+    const requestModelOptions: Args = {
+        isReconnecting: false,
+        diffId,
+        loadFile: true,
+        diffSide: 'left'
+    };
+
+    diagramLoader.load({ requestModelOptions });
 }
