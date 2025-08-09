@@ -38,16 +38,16 @@ const port = GLSP_SERVER_PORT;
 const id = 'workflow';
 const diagramType = 'workflow-diagram';
 
+const loc = window.location.pathname;
+const currentDir = loc.substring(0, loc.lastIndexOf('/'));
+
 const htmlParameters = getParameters();
-console.log(htmlParameters);
-console.log(htmlParameters['diff-side']);
+
 document.getElementsByName('sprotty-div')[0].setAttribute('id', htmlParameters['sprotty-id']);
 
 const fileName = htmlParameters['file-name'] ? htmlParameters['file-name'] : 'example1.wf';
 const clientId = htmlParameters['sprotty-id'] ? htmlParameters['sprotty-id'] : 'sprotty-0';
 const diffSide: string | undefined = htmlParameters['diff-side'];
-const loc = window.location.pathname;
-const currentDir = loc.substring(0, loc.lastIndexOf('/'));
 const examplePath = resolve(join(currentDir, `../app/files/${fileName}`));
 
 // TODO: ATTENTION hardcoded filename of base
@@ -75,7 +75,7 @@ async function initialize(connectionProvider: MessageConnection, isReconnecting 
     };
 
     if (diffSide) {
-        // diffSide = local or remote -> base must be loaded first
+        // if diffSide = local or remote -> base must be loaded first
         const diffId = uuid();
 
         loadBase(diffId);
