@@ -50,8 +50,9 @@ const clientId = htmlParameters['sprotty-id'] ? htmlParameters['sprotty-id'] : '
 const diffSide: string | undefined = htmlParameters['diff-side'];
 const examplePath = resolve(join(currentDir, `../app/files/${fileName}`));
 
-// TODO: ATTENTION hardcoded filename of base
+// TODO: ATTENTION hardcoded filename and path of base
 const BASE_FILENAME = 'base.wf';
+const BASE_URI = resolve(join(currentDir, `../app/files/${BASE_FILENAME}`));
 
 const webSocketUrl = `ws://${host}:${port}/${id}`;
 
@@ -102,14 +103,11 @@ async function reconnect(connectionProvider: MessageConnection): Promise<void> {
 }
 
 function loadBase(diffId: string): void {
-    // TODO: ATTENTION hardcoded path of base
-    const baseUri = resolve(join(currentDir, `../app/files/${BASE_FILENAME}`));
-
     const containerOptions: IDiagramOptions = {
         clientId: 'base-loader-client',
         diagramType,
         glspClientProvider: async () => glspClient,
-        sourceUri: baseUri,
+        sourceUri: BASE_URI,
         editMode: EditMode.READONLY
     };
 
