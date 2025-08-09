@@ -32,26 +32,25 @@ import { join, resolve } from 'path';
 import { v4 as uuid } from 'uuid';
 import { MessageConnection } from 'vscode-jsonrpc';
 import createContainer from './di.config';
+import { getParameters } from './url-parameters';
 const host = GLSP_SERVER_HOST;
 const port = GLSP_SERVER_PORT;
 const id = 'workflow';
 const diagramType = 'workflow-diagram';
 
-const script = document.currentScript;
+const htmlParameters = getParameters();
+console.log(htmlParameters);
+console.log(htmlParameters['diff-side']);
+document.getElementsByName('sprotty-div')[0].setAttribute('id', htmlParameters['sprotty-id']);
 
-if (!script) {
-    throw Error('script null, can not continue');
-}
-
-const fileName = script.getAttribute('data-file-name') ? script.getAttribute('data-file-name') : 'example1.wf';
-const idFromScript = script.getAttribute('data-id') ? script.getAttribute('data-id') : 'sprotty-0';
-const diffSide = script.getAttribute('data-diff-side');
+const fileName = htmlParameters['file-name'] ? htmlParameters['file-name'] : 'example1.wf';
+const clientId = htmlParameters['sprotty-id'] ? htmlParameters['sprotty-id'] : 'sprotty-0';
+const diffSide: string | undefined = htmlParameters['diff-side'];
 const loc = window.location.pathname;
 const currentDir = loc.substring(0, loc.lastIndexOf('/'));
 const examplePath = resolve(join(currentDir, `../app/files/${fileName}`));
-const clientId = idFromScript ? idFromScript : 'sprotty-0';
 
-// TODO: ATTENTION thardcoded filename of base
+// TODO: ATTENTION hardcoded filename of base
 const BASE_FILENAME = 'base.wf';
 
 const webSocketUrl = `ws://${host}:${port}/${id}`;
@@ -64,7 +63,7 @@ wsProvider.listen({ onConnection: initialize, onReconnect: reconnect, logger: co
 async function initialize(connectionProvider: MessageConnection, isReconnecting = false): Promise<void> {
     glspClient = new BaseJsonrpcGLSPClient({ id, connectionProvider });
     const containerOptions: IDiagramOptions = { clientId, diagramType, glspClientProvider: async () => glspClient, sourceUri: examplePath };
-    if (!diffSide) {
+    if (diffSide) {
         containerOptions.editMode = EditMode.READONLY;
     }
     container = createContainer(containerOptions);

@@ -13,9 +13,8 @@ examples/workflow-standalone/app
 !examples/workflow-standalone/app/files/base.wf
 !examples/workflow-standalone/app/files/local.wf
 !examples/workflow-standalone/app/files/remote.wf
-!examples/workflow-standalone/app/_remote.html
-!examples/workflow-standalone/app/_local.html
-!examples/workflow-standalone/app/_base.html
+!examples/workflow-standalone/app/_diff.html
+!examples/workflow-standalone/app/diagram.html
 
 *.ttf
 *.log
